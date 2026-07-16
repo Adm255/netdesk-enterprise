@@ -11,6 +11,20 @@ const validateRegister = (body) => {
   return { valid: true };
 };
 
+const validateLogin = (body) => {
+  const { email, password } = body;
+
+  if (!email || !password) {
+    return {
+      valid: false,
+      message: "Email and password are required."
+    };
+  }
+
+  return { valid: true };
+};
+
 module.exports = {
-  validateRegister
+  validateRegister,
+  validateLogin
 };
