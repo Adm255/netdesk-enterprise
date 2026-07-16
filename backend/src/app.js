@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
+const authModule = require("./modules/auth");
+
 const app = express();
 
 app.use(cors());
@@ -14,5 +16,7 @@ app.get("/api/health", (req, res) => {
     message: "Welcome to NetDesk Enterprise API"
   });
 });
+
+app.use("/api/v1/auth", authModule.routes);
 
 module.exports = app;
