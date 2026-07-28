@@ -3,6 +3,8 @@ const cors = require("cors");
 
 const authModule = require("./modules/auth");
 
+const usersModule = require("./modules/users");
+
 const app = express();
 
 app.use(cors());
@@ -18,5 +20,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/v1/auth", authModule.routes);
+
+app.use("/api/v1/users", usersModule.routes);
 
 module.exports = app;
