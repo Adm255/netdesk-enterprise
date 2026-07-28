@@ -3,7 +3,8 @@ const jwt = require("jsonwebtoken");
 
 const {
   findUserByEmail,
-  createUser
+  createUser,
+  findUserById
 } = require("./repository");
 
 const registerUser = async (userData) => {
@@ -79,7 +80,18 @@ const loginUser = async ({ email, password }) => {
   };
 };
 
+const getCurrentUser = async (userId) => {
+  const user = await findUserById(userId);
+
+  if (!user) {
+    throw new Error("User not found.");
+  }
+
+  return user;
+};
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getCurrentUser
 };

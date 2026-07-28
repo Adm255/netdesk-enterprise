@@ -1,6 +1,7 @@
 const {
   registerUser,
-  loginUser
+  loginUser,
+  getCurrentUser
 } = require("./service");
 
 const {
@@ -63,7 +64,23 @@ const login = async (req, res) => {
   }
 };
 
+const me = async (req, res) => {
+  try {
+    const user = await getCurrentUser(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    return res.status(404).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 module.exports = {
   register,
-  login
+  login,
+  me
 };

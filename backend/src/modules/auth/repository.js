@@ -12,9 +12,25 @@ const createUser = async (userData) => {
   });
 };
 
-
+const findUserById = async (id) => {
+  return prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+      status: true,
+      roleId: true,
+      departmentId: true,
+      createdAt: true
+    }
+  });
+};
 
 module.exports = {
   findUserByEmail,
-  createUser
+  createUser,
+  findUserById
 };
