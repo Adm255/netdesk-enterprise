@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 
 const authModule = require("./modules/auth");
-
 const usersModule = require("./modules/users");
+const ticketsModule = require("./modules/tickets");
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/v1/auth", authModule.routes);
-
 app.use("/api/v1/users", usersModule.routes);
+app.use("/api/v1/tickets", ticketsModule.routes);
 
 module.exports = app;
