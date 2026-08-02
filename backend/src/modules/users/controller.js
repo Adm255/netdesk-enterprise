@@ -1,6 +1,7 @@
 const {
   getAllUsers,
-  getUserById
+  getUserById,
+  createNewUser
 } = require("./service");
 
 const getUsers = async (req, res) => {
@@ -13,6 +14,23 @@ const getUsers = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+const createUser = async (req, res) => {
+  try {
+    const user = await createNewUser(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: "User created successfully.",
+      user
+    });
+  } catch (error) {
+    return res.status(400).json({
       success: false,
       message: error.message
     });
@@ -37,5 +55,6 @@ const getUser = async (req, res) => {
 
 module.exports = {
   getUsers,
-  getUser
+  getUser,
+  createUser
 };

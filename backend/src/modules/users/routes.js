@@ -6,7 +6,8 @@ const ROLES = require("../../constants/roles");
 
 const {
   getUsers,
-  getUser
+  getUser,
+  createUser
 } = require("./controller");
 
 const router = express.Router();
@@ -16,6 +17,13 @@ router.get(
   authenticate,
   authorize(ROLES.ADMIN),
   getUsers
+);
+
+router.post(
+  "/",
+  authenticate,
+  authorize(ROLES.ADMIN),
+  createUser
 );
 
 router.get(

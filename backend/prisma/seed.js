@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcrypt");
 
 const prisma = new PrismaClient();
 
@@ -36,6 +37,26 @@ async function main() {
       create: department
     });
   }
+
+  // Development Administrator
+  const adminPassword = await bcrypt.hash("Admin123!", 10);
+
+  await prisma.user.upsert({
+    where: {
+      email: "admin@netdesk.com"
+    },
+    update: {},
+    create: {
+      firstName: "NetDesk",
+      lastName: "Administrator",
+      email: "admin@netdesk.com",
+      password: adminPassword,
+      phone: null,
+      status: true,
+      roleId: 1,
+      departmentId: 1
+    }
+  });
 
   console.log("✅ Database seeded successfully.");
 }

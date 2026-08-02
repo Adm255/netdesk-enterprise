@@ -1,6 +1,10 @@
+const bcrypt = require("bcrypt");
+
 const {
   findAllUsers,
-  findUserById
+  findUserById,
+  findUserByEmail,
+  createUser
 } = require("./repository");
 
 const getAllUsers = async () => {
@@ -17,7 +21,31 @@ const getUserById = async (id) => {
   return user;
 };
 
+const createNewUser = async (userData) => {
+  const existingUser = await findUserByEmail(userData.email);
+
+  if (existingUser) {
+    throw new Error("Email already exists.");
+  }
+
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+  const user = await createUser({
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    email: userData.email,
+    password: hashedPassword,
+    phone: userData.phone || null,
+    status: userData.status ?? true,
+    roleId: Number(userData.roleId),
+    departmentId: Number(userData.departmentId)
+  });
+
+  return user;
+};
+
 module.exports = {
   getAllUsers,
-  getUserById
+  getUserById,
+  createNewUser
 };
