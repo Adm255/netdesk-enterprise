@@ -7,7 +7,9 @@ const ROLES = require("../../constants/roles");
 const {
   getUsers,
   getUser,
-  createUser
+  createUser,
+  updateUser,
+  deleteUser
 } = require("./controller");
 
 const router = express.Router();
@@ -31,6 +33,20 @@ router.get(
   authenticate,
   authorize(ROLES.ADMIN),
   getUser
+);
+
+router.put(
+  "/:id",
+  authenticate,
+  authorize(ROLES.ADMIN),
+  updateUser
+);
+
+router.delete(
+  "/:id",
+  authenticate,
+  authorize(ROLES.ADMIN),
+  deleteUser
 );
 
 module.exports = router;

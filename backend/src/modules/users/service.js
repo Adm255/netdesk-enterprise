@@ -4,7 +4,9 @@ const {
   findAllUsers,
   findUserById,
   findUserByEmail,
-  createUser
+  createUser,
+  updateUser,
+  deleteUser
 } = require("./repository");
 
 const getAllUsers = async () => {
@@ -44,8 +46,74 @@ const createNewUser = async (userData) => {
   return user;
 };
 
+const updateExistingUser = async (id, userData) => {
+  const existingUser = await findUserById(Number(id));
+
+  if (!existingUser) {
+    throw new Error("User not found.");
+  }
+
+  if (userData.email && userData.email !== existingUser.email) {
+    const emailOwner = await findUserByEmail(userData.email);
+
+    if (emailOwner) {
+      throw new Error("Email already exists.");
+    }
+  }
+
+  const updateData = {};
+
+  if (userData.firstName !== undefined) {
+    updateData.firstName = userData.firstName;
+  }
+
+  if (userData.lastName !== undefined) {
+    updateData.lastName = userData.lastName;
+  }
+
+  if (userData.email !== undefined) {
+    updateData.email = userData.email;
+  }
+
+  if (userData.phone !== undefined) {
+    updateData.phone = userData.phone;
+  }
+
+  if (userData.status !== undefined) {
+    updateData.status = userData.status;
+  }
+
+  if (userData.roleId !== undefined) {
+    updateData.roleId = Number(userData.roleId);
+  }
+
+  if (userData.departmentId !== undefined) {
+    updateData.departmentId = Number(userData.departmentId);
+  }
+
+  if (userData.password) {
+    updateData.password = await bcrypt.hash(userData.password, 10);
+  }
+
+  return await updateUser(id, updateData);
+};
+
+const deleteExistingUser = async (id) => {
+  const existingUser = await findUserById(Number(id));
+
+  if (!existingUser) {
+    throw new Error("User not found.");
+  }
+
+  await deleteUser(id);
+
+  return existingUser;
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
-  createNewUser
+  createNewUser,
+  updateExistingUser,
+  deleteExistingUser
 };

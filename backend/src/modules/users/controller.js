@@ -1,7 +1,9 @@
 const {
   getAllUsers,
   getUserById,
-  createNewUser
+  createNewUser,
+  updateExistingUser,
+  deleteExistingUser
 } = require("./service");
 
 const getUsers = async (req, res) => {
@@ -53,8 +55,53 @@ const getUser = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const user = await updateExistingUser(
+      req.params.id,
+      req.body
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully.",
+      user
+    });
+  } catch (error) {
+    const statusCode =
+      error.message === "User not found." ? 404 : 400;
+
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = await deleteExistingUser(req.params.id);
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully.",
+      user
+    });
+  } catch (error) {
+    const statusCode =
+      error.message === "User not found." ? 404 : 400;
+
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   getUsers,
   getUser,
-  createUser
+  createUser,
+  updateUser,
+  deleteUser
 };
