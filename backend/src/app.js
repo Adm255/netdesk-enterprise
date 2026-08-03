@@ -5,6 +5,7 @@ const authModule = require("./modules/auth");
 const usersModule = require("./modules/users");
 const ticketsModule = require("./modules/tickets");
 const commentsModule = require("./modules/comments");
+const dashboardModule = require("./modules/dashboard");
 
 const app = express();
 
@@ -27,6 +28,11 @@ app.use("/api/v1/tickets", ticketsModule.routes);
 app.use(
   "/api/v1/tickets/:ticketId/comments",
   commentsModule.routes
+);
+
+app.use(
+  "/api/v1/dashboard",
+  dashboardModule.routes
 );
 
 module.exports = app;
