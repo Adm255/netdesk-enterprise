@@ -9,6 +9,12 @@ const dashboardModule = require("./modules/dashboard");
 
 const app = express();
 
+
+const {
+  notFound,
+  errorHandler
+} = require("./middleware/error.middleware");
+
 app.use(cors());
 app.use(express.json());
 
@@ -34,5 +40,8 @@ app.use(
   "/api/v1/dashboard",
   dashboardModule.routes
 );
+
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
