@@ -28,14 +28,15 @@ const createTicket = async (req, res) => {
 
 const getTickets = async (req, res) => {
   try {
-    const tickets = await getAllTickets();
+    const result = await getAllTickets(req.query);
 
     return res.status(200).json({
       success: true,
-      tickets
+      tickets: result.tickets,
+      pagination: result.pagination
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message
     });

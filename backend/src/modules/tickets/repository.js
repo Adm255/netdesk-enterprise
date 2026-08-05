@@ -26,13 +26,67 @@ const createTicket = async (data) => {
   });
 };
 
-const findAllTickets = async () => {
-  return prisma.ticket.findMany({
-    include: ticketInclude,
-    orderBy: {
-      createdAt: "desc"
-    }
-  });
+const findAllTickets = async ({
+  page = 1,
+  limit = 10,
+  status,
+  priority,
+  assignedToId,
+  search
+} = {}) => {
+  const where = {};
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (priority) {
+    where.priority = priority;
+  }
+
+  if (assignedToId !== undefined) {
+    where.assignedToId = Number(assignedToId);
+  }
+
+  if (search) {
+    where.OR = [
+      {
+        title: {
+          contains: search,
+          mode: "insensitive"
+        }
+      },
+      {
+        description: {
+          contains: search,
+          mode: "insensitive"
+        }
+      }
+    ];
+  }
+
+  const skip = (page - 1) * limit;
+
+  const [tickets, total] = await Promise.all([
+    prisma.ticket.findMany({
+      where,
+      include: ticketInclude,
+      orderBy: {
+        createdAt: "desc"
+      },
+      skip,
+      take: limit
+    }),
+
+    prisma.ticket.count({
+      where
+    })
+  ]);
+
+  return {
+    tickets,
+    total
+  };
 };
 
 const findTicketById = async (id) => {
