@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDashboardStats } from "../api/dashboard";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
-  const [stats, setStats] = useState(null);
-
   const { logout } = useAuth();
   const navigate = useNavigate();
+
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -32,37 +33,37 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: "40px" }}>
-      <button
-        onClick={handleLogout}
-        style={{
-          float: "right",
-          padding: "10px 20px",
-          cursor: "pointer",
-        }}
-      >
-        Logout
-      </button>
+    <>
+      <Navbar />
 
-      <h1>NetDesk Dashboard</h1>
+      <div style={{ padding: "40px" }}>
+        <button
+          style={{ float: "right" }}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
 
-      <hr />
+        <h1>NetDesk Dashboard</h1>
 
-      <h2>Tickets</h2>
+        <hr />
 
-      <p>Total Tickets: {stats.tickets.totalTickets}</p>
-      <p>Open: {stats.tickets.status.open}</p>
-      <p>In Progress: {stats.tickets.status.inProgress}</p>
-      <p>Resolved: {stats.tickets.status.resolved}</p>
-      <p>Closed: {stats.tickets.status.closed}</p>
+        <h2>Tickets</h2>
 
-      <hr />
+        <p>Total Tickets: {stats.tickets.totalTickets}</p>
+        <p>Open: {stats.tickets.status.open}</p>
+        <p>In Progress: {stats.tickets.status.inProgress}</p>
+        <p>Resolved: {stats.tickets.status.resolved}</p>
+        <p>Closed: {stats.tickets.status.closed}</p>
 
-      <h2>Users</h2>
+        <hr />
 
-      <p>Total Users: {stats.users.totalUsers}</p>
-      <p>Active Users: {stats.users.activeUsers}</p>
-      <p>Technicians: {stats.users.technicians}</p>
-    </div>
+        <h2>Users</h2>
+
+        <p>Total Users: {stats.users.totalUsers}</p>
+        <p>Active Users: {stats.users.activeUsers}</p>
+        <p>Technicians: {stats.users.technicians}</p>
+      </div>
+    </>
   );
 }

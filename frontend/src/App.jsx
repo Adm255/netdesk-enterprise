@@ -7,6 +7,7 @@ import {
 
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Tickets from "./pages/Tickets";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -23,6 +24,17 @@ function App() {
           element={
             token ? (
               <Dashboard />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        <Route
+          path="/tickets"
+          element={
+            token ? (
+              <Tickets />
             ) : (
               <Navigate to="/login" />
             )
