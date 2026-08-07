@@ -7,7 +7,7 @@ const authenticate = (req, res, next) => {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Access denied. No token provided."
+        message: "Access denied. No token provided.",
       });
     }
 
@@ -21,11 +21,11 @@ const authenticate = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired token."
+      message: "Invalid or expired token.",
     });
   }
 };
 
 module.exports = {
-  authenticate
+  authenticate,
 };
