@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getDashboardStats } from "../api/dashboard";
+import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadStats = async () => {
@@ -17,12 +22,28 @@ export default function Dashboard() {
     loadStats();
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   if (!stats) {
     return <h2>Loading dashboard...</h2>;
   }
 
   return (
     <div style={{ padding: "40px" }}>
+      <button
+        onClick={handleLogout}
+        style={{
+          float: "right",
+          padding: "10px 20px",
+          cursor: "pointer",
+        }}
+      >
+        Logout
+      </button>
+
       <h1>NetDesk Dashboard</h1>
 
       <hr />
