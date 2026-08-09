@@ -127,7 +127,7 @@ Adventist University of Central Africa (AUCA)
 
 ### Project Mentor
 
-ChatGPT
+Self-directed Developer
 
 ---
 
