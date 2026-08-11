@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
-    createTicket,
-    deleteTicket,
-    getTickets,
-    updateTicket,
+  createTicket,
+  deleteTicket,
+  getTickets,
+  updateTicket,
 } from "../api/tickets";
 
 import Navbar from "../components/Navbar";
@@ -19,6 +19,7 @@ export default function Tickets() {
       setTickets(data.tickets);
     } catch (error) {
       console.error(error);
+
       alert(
         error.response?.data?.message ||
           "Unable to load tickets."
@@ -33,7 +34,11 @@ export default function Tickets() {
   const handleCreateTicket = async (ticketData) => {
     try {
       if (editingTicket) {
-        await updateTicket(editingTicket.id, ticketData);
+        await updateTicket(
+          editingTicket.id,
+          ticketData
+        );
+
         setEditingTicket(null);
       } else {
         await createTicket(ticketData);
@@ -53,7 +58,9 @@ export default function Tickets() {
       "Are you sure you want to delete this ticket?"
     );
 
-    if (!confirmDelete) return;
+    if (!confirmDelete) {
+      return;
+    }
 
     try {
       await deleteTicket(id);
@@ -105,11 +112,20 @@ export default function Tickets() {
               <p>{ticket.description}</p>
 
               <p>
-                <strong>Status:</strong> {ticket.status}
+                <strong>Status:</strong>{" "}
+                {ticket.status}
               </p>
 
               <p>
-                <strong>Priority:</strong> {ticket.priority}
+                <strong>Priority:</strong>{" "}
+                {ticket.priority}
+              </p>
+
+              <p>
+                <strong>Assigned To:</strong>{" "}
+                {ticket.assignedTo
+                  ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}`
+                  : "Unassigned"}
               </p>
 
               <div

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getUsers } from "../api/users";
 
 export default function TicketForm({
   onCreate,
@@ -8,16 +9,43 @@ export default function TicketForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("LOW");
+  const [assignedToId, setAssignedToId] = useState("");
+
+  const [technicians, setTechnicians] = useState([]);
+
+  useEffect(() => {
+    const loadTechnicians = async () => {
+      try {
+        const data = await getUsers();
+
+        const technicianUsers = data.users.filter(
+          (user) => user.roleId === 3
+        );
+
+        setTechnicians(technicianUsers);
+      } catch (error) {
+        console.error("Failed to load technicians:", error);
+      }
+    };
+
+    loadTechnicians();
+  }, []);
 
   useEffect(() => {
     if (editingTicket) {
       setTitle(editingTicket.title);
       setDescription(editingTicket.description);
       setPriority(editingTicket.priority);
+      setAssignedToId(
+        editingTicket.assignedToId
+          ? String(editingTicket.assignedToId)
+          : ""
+      );
     } else {
       setTitle("");
       setDescription("");
       setPriority("LOW");
+      setAssignedToId("");
     }
   }, [editingTicket]);
 
@@ -28,47 +56,66 @@ export default function TicketForm({
       title,
       description,
       priority,
+      assignedToId: assignedToId
+        ? Number(assignedToId)
+        : null,
     });
 
     if (!editingTicket) {
       setTitle("");
       setDescription("");
       setPriority("LOW");
+      setAssignedToId("");
     }
   };
 
-return (
-  <form onSubmit={handleSubmit} style={{ marginBottom: "30px" }}>
-    <h2>
-      {editingTicket ? "Edit Ticket" : "Create Ticket"}
-    </h2>
+  return (
+    <form
+      onSubmit={handleSubmit}
+      style={{ marginBottom: "30px" }}
+    >
+      <h2>
+        {editingTicket
+          ? "Edit Ticket"
+          : "Create Ticket"}
+      </h2>
 
-    <div style={{ marginBottom: "10px" }}>
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-        style={{ width: "300px", padding: "10px" }}
-      />
-    </div>
+      <div style={{ marginBottom: "10px" }}>
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          style={{
+            width: "300px",
+            padding: "10px",
+          }}
+        />
+      </div>
 
       <div style={{ marginBottom: "10px" }}>
         <textarea
           placeholder="Description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) =>
+            setDescription(e.target.value)
+          }
           rows={4}
           required
-          style={{ width: "300px", padding: "10px" }}
+          style={{
+            width: "300px",
+            padding: "10px",
+          }}
         />
       </div>
 
       <div style={{ marginBottom: "15px" }}>
         <select
           value={priority}
-          onChange={(e) => setPriority(e.target.value)}
+          onChange={(e) =>
+            setPriority(e.target.value)
+          }
           style={{ padding: "10px" }}
         >
           <option value="LOW">LOW</option>
@@ -78,8 +125,34 @@ return (
         </select>
       </div>
 
+      <div style={{ marginBottom: "15px" }}>
+        <select
+          value={assignedToId}
+          onChange={(e) =>
+            setAssignedToId(e.target.value)
+          }
+          style={{ padding: "10px" }}
+        >
+          <option value="">
+            Unassigned
+          </option>
+
+          {technicians.map((technician) => (
+            <option
+              key={technician.id}
+              value={technician.id}
+            >
+              {technician.firstName}{" "}
+              {technician.lastName}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <button type="submit">
-        {editingTicket ? "Update Ticket" : "Create Ticket"}
+        {editingTicket
+          ? "Update Ticket"
+          : "Create Ticket"}
       </button>
 
       {editingTicket && (
