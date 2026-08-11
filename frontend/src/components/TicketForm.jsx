@@ -9,6 +9,7 @@ export default function TicketForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("LOW");
+  const [status, setStatus] = useState("OPEN");
   const [assignedToId, setAssignedToId] = useState("");
 
   const [technicians, setTechnicians] = useState([]);
@@ -24,7 +25,10 @@ export default function TicketForm({
 
         setTechnicians(technicianUsers);
       } catch (error) {
-        console.error("Failed to load technicians:", error);
+        console.error(
+          "Failed to load technicians:",
+          error
+        );
       }
     };
 
@@ -36,6 +40,7 @@ export default function TicketForm({
       setTitle(editingTicket.title);
       setDescription(editingTicket.description);
       setPriority(editingTicket.priority);
+      setStatus(editingTicket.status);
       setAssignedToId(
         editingTicket.assignedToId
           ? String(editingTicket.assignedToId)
@@ -45,6 +50,7 @@ export default function TicketForm({
       setTitle("");
       setDescription("");
       setPriority("LOW");
+      setStatus("OPEN");
       setAssignedToId("");
     }
   }, [editingTicket]);
@@ -56,6 +62,7 @@ export default function TicketForm({
       title,
       description,
       priority,
+      status,
       assignedToId: assignedToId
         ? Number(assignedToId)
         : null,
@@ -65,6 +72,7 @@ export default function TicketForm({
       setTitle("");
       setDescription("");
       setPriority("LOW");
+      setStatus("OPEN");
       setAssignedToId("");
     }
   };
@@ -85,7 +93,9 @@ export default function TicketForm({
           type="text"
           placeholder="Title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) =>
+            setTitle(e.target.value)
+          }
           required
           style={{
             width: "300px",
@@ -125,6 +135,27 @@ export default function TicketForm({
         </select>
       </div>
 
+      {editingTicket && (
+        <div style={{ marginBottom: "15px" }}>
+          <select
+            value={status}
+            onChange={(e) =>
+              setStatus(e.target.value)
+            }
+            style={{ padding: "10px" }}
+          >
+            <option value="OPEN">OPEN</option>
+            <option value="IN_PROGRESS">
+              IN PROGRESS
+            </option>
+            <option value="RESOLVED">
+              RESOLVED
+            </option>
+            <option value="CLOSED">CLOSED</option>
+          </select>
+        </div>
+      )}
+
       <div style={{ marginBottom: "15px" }}>
         <select
           value={assignedToId}
@@ -133,9 +164,7 @@ export default function TicketForm({
           }
           style={{ padding: "10px" }}
         >
-          <option value="">
-            Unassigned
-          </option>
+          <option value="">Unassigned</option>
 
           {technicians.map((technician) => (
             <option
@@ -167,3 +196,4 @@ export default function TicketForm({
     </form>
   );
 }
+

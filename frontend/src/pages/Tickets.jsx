@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   createTicket,
   deleteTicket,
@@ -58,9 +59,7 @@ export default function Tickets() {
       "Are you sure you want to delete this ticket?"
     );
 
-    if (!confirmDelete) {
-      return;
-    }
+    if (!confirmDelete) return;
 
     try {
       await deleteTicket(id);
@@ -77,6 +76,10 @@ export default function Tickets() {
     setEditingTicket(ticket);
   };
 
+  const formatStatus = (status) => {
+    return status.replace("_", " ");
+  };
+
   return (
     <>
       <Navbar />
@@ -85,7 +88,9 @@ export default function Tickets() {
         <TicketForm
           onCreate={handleCreateTicket}
           editingTicket={editingTicket}
-          onCancelEdit={() => setEditingTicket(null)}
+          onCancelEdit={() =>
+            setEditingTicket(null)
+          }
         />
 
         <hr />
@@ -113,7 +118,7 @@ export default function Tickets() {
 
               <p>
                 <strong>Status:</strong>{" "}
-                {ticket.status}
+                {formatStatus(ticket.status)}
               </p>
 
               <p>
