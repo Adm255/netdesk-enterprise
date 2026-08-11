@@ -8,6 +8,7 @@ import {
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Tickets from "./pages/Tickets";
+import Users from "./pages/Users";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -15,9 +16,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route
+          path="/"
+          element={<Navigate to="/login" />}
+        />
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
         <Route
           path="/dashboard"
@@ -35,6 +42,17 @@ function App() {
           element={
             token ? (
               <Tickets />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            token ? (
+              <Users />
             ) : (
               <Navigate to="/login" />
             )

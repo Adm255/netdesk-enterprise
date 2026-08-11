@@ -34,13 +34,17 @@ export default function Navbar() {
         NetDesk
       </h2>
 
-      <Link to="/dashboard" style={linkStyle("/dashboard")}>
-        Dashboard
-      </Link>
+    <Link to="/dashboard" style={linkStyle("/dashboard")}>
+  Dashboard
+</Link>
 
-      <Link to="/tickets" style={linkStyle("/tickets")}>
-        Tickets
-      </Link>
-    </nav>
+<Link to="/tickets" style={linkStyle("/tickets")}>
+  Tickets
+</Link>
+
+<Link to="/users" style={linkStyle("/users")}>
+  Users
+</Link>
+</nav>
   );
 }
