@@ -3,37 +3,43 @@ const {
   findAllTickets,
   findTicketById,
   updateTicket,
-  deleteTicket
+  deleteTicket,
 } = require("./repository");
+
+const {
+  createTicketSchema,
+  updateTicketSchema,
+} = require("../../validators/ticketValidator");
 
 const VALID_STATUSES = [
   "OPEN",
   "IN_PROGRESS",
   "RESOLVED",
-  "CLOSED"
+  "CLOSED",
 ];
 
 const VALID_PRIORITIES = [
   "LOW",
   "MEDIUM",
   "HIGH",
-  "URGENT"
+  "URGENT",
 ];
 
 const createNewTicket = async (ticketData, userId) => {
-  if (!ticketData.title || !ticketData.description) {
-    throw new Error("Title and description are required.");
-  }
+  const validatedData = createTicketSchema.parse({
+    ...ticketData,
+    createdById: Number(userId),
+    status: "OPEN",
+  });
 
   const ticket = await createTicket({
-    title: ticketData.title,
-    description: ticketData.description,
-    priority: ticketData.priority || "MEDIUM",
+    title: validatedData.title,
+    description: validatedData.description,
+    priority: validatedData.priority,
     status: "OPEN",
-    createdById: Number(userId),
-    assignedToId: ticketData.assignedToId
-      ? Number(ticketData.assignedToId)
-      : null
+    createdById: validatedData.createdById,
+    assignedToId:
+      validatedData.assignedToId ?? null,
   });
 
   return ticket;
@@ -98,7 +104,7 @@ const getAllTickets = async (query = {}) => {
     status,
     priority,
     assignedToId,
-    search
+    search,
   });
 
   return {
@@ -107,8 +113,8 @@ const getAllTickets = async (query = {}) => {
       page,
       limit,
       total: result.total,
-      totalPages: Math.ceil(result.total / limit)
-    }
+      totalPages: Math.ceil(result.total / limit),
+    },
   };
 };
 
@@ -129,29 +135,31 @@ const updateExistingTicket = async (id, ticketData) => {
     throw new Error("Ticket not found.");
   }
 
+  const validatedData =
+    updateTicketSchema.parse(ticketData);
+
   const updateData = {};
 
-  if (ticketData.title !== undefined) {
-    updateData.title = ticketData.title;
+  if (validatedData.title !== undefined) {
+    updateData.title = validatedData.title;
   }
 
-  if (ticketData.description !== undefined) {
-    updateData.description = ticketData.description;
+  if (validatedData.description !== undefined) {
+    updateData.description =
+      validatedData.description;
   }
 
-  if (ticketData.priority !== undefined) {
-    updateData.priority = ticketData.priority;
+  if (validatedData.priority !== undefined) {
+    updateData.priority = validatedData.priority;
   }
 
-  if (ticketData.status !== undefined) {
-    updateData.status = ticketData.status;
+  if (validatedData.status !== undefined) {
+    updateData.status = validatedData.status;
   }
 
-  if (ticketData.assignedToId !== undefined) {
+  if (validatedData.assignedToId !== undefined) {
     updateData.assignedToId =
-      ticketData.assignedToId === null
-        ? null
-        : Number(ticketData.assignedToId);
+      validatedData.assignedToId;
   }
 
   return await updateTicket(id, updateData);
@@ -174,5 +182,5 @@ module.exports = {
   getAllTickets,
   getTicketById,
   updateExistingTicket,
-  deleteExistingTicket
+  deleteExistingTicket,
 };

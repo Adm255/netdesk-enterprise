@@ -1,111 +1,836 @@
+/* =========================================================
+   NETDESK — PROFESSIONAL GLOBAL STYLES
+   Clean enterprise IT support dashboard
+   ========================================================= */
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* -------------------------------------------------------
+     COLORS
+     ------------------------------------------------------- */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --bg: #0f141b;
+  --bg-secondary: #151b23;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
+  --surface: #1a212b;
+  --surface-hover: #202936;
+  --surface-soft: #171e27;
+
+  --border: #2b3542;
+  --border-light: #344050;
+
+  --text: #d7dee8;
+  --text-muted: #8d99a8;
+  --text-light: #aeb8c5;
+  --heading: #f1f5f9;
+
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-soft: #1e3a5f;
+
+  --success: #22c55e;
+  --success-soft: #143b27;
+
+  --warning: #f59e0b;
+  --warning-soft: #49320c;
+
+  --danger: #ef4444;
+  --danger-soft: #481d22;
+
+  --purple: #8b5cf6;
+  --purple-soft: #30204f;
+
+  /* -------------------------------------------------------
+     TYPOGRAPHY
+     ------------------------------------------------------- */
+
+  --font:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+
   color: var(--text);
   background: var(--bg);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  font-family: var(--font);
+
+  color: var(--text) !important;
+  background: var(--bg) !important;
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+
+  color: var(--text) !important;
+  background: var(--bg) !important;
 }
 
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+
+  color: var(--heading) !important;
+
+  font-family: var(--font);
+  font-weight: 700;
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  font-size: 40px;
+  line-height: 1.15;
+  letter-spacing: -0.7px;
 }
+
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+}
+
+h3 {
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+p {
+  margin-top: 0;
+  color: var(--text-muted);
+}
+
+small {
+  color: var(--text-muted);
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+a {
+  color: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+
+  color: var(--text) !important;
+  background: #111821 !important;
+
+  border: 1px solid var(--border) !important;
+  border-radius: 6px;
+
+  padding: 11px 13px;
+
+  font-size: 15px;
+
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #697586 !important;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: var(--border-light) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary) !important;
+
+  outline: none;
+
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+select {
+  cursor: pointer;
+}
+
+select option {
+  background: #111821;
+  color: #f1f5f9;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button {
+  border: 1px solid transparent;
+
+  border-radius: 6px;
+
+  padding: 10px 16px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+button:hover {
+  transform: none;
+}
+
+button:active {
+  transform: none;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f141b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #303b49;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3c4959;
+}
+
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: #264d82;
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  width: 100%;
+
+  background: #151b23 !important;
+
+  border-bottom: 1px solid var(--border);
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1180px;
+
+  margin: 0 auto;
+
+  padding: 13px 24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 36px;
+
+  position: relative;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  color: #f1f5f9 !important;
+
+  text-decoration: none;
+
+  font-size: 19px;
+  font-weight: 700;
+
+  letter-spacing: -0.2px;
+
+  white-space: nowrap;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+
+  background: var(--primary) !important;
+
+  color: #ffffff !important;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+
+  gap: 3px;
+}
+
+.navbar-link {
+  color: #9aa6b5 !important;
+
+  text-decoration: none;
+
+  padding: 9px 14px;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.navbar-link:hover {
+  color: #f1f5f9 !important;
+  background: #202936 !important;
+}
+
+.navbar-link.active {
+  color: #ffffff !important;
+  background: var(--primary) !important;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+.mobile-menu-button {
+  display: none;
+
+  margin-left: auto;
+
+  width: 40px;
+  height: 40px;
+
+  padding: 8px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 6px;
+
+  background: #1a212b;
+
+  cursor: pointer;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+}
+
+.mobile-menu-button span {
+  display: block;
+
+  width: 19px;
+  height: 2px;
+
+  border-radius: 2px;
+
+  background: #cbd5e1;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.mobile-menu-button:hover {
+  background: #202936;
+}
+
+.mobile-menu-button.open span:nth-child(1) {
+  transform:
+    translateY(7px)
+    rotate(45deg);
+}
+
+.mobile-menu-button.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-button.open span:nth-child(3) {
+  transform:
+    translateY(-7px)
+    rotate(-45deg);
+}
+
+.mobile-menu {
+  display: none;
+}
+
+
+/* =========================================================
+   COMMON PAGE CONTAINERS
+   ========================================================= */
+
+main,
+.page,
+.dashboard,
+.tickets-page,
+.users-page {
+  color: var(--text);
+  background: var(--bg);
+}
+
+
+/* =========================================================
+   CARDS / PANELS
+   ========================================================= */
+
+.card,
+.panel,
+.stat-card,
+.ticket-card,
+.user-card,
+.form-card {
+  background: var(--surface) !important;
+
+  border: 1px solid var(--border) !important;
+
+  border-radius: 8px;
+
+  box-shadow: none !important;
+}
+
+.card:hover,
+.panel:hover,
+.stat-card:hover,
+.ticket-card:hover,
+.user-card:hover {
+  border-color: var(--border-light) !important;
+}
+
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+label {
+  color: var(--text-light) !important;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+button[type="submit"],
+.btn-primary,
+.primary-button {
+  background: var(--primary) !important;
+
+  color: #ffffff !important;
+
+  border-color: var(--primary) !important;
+}
+
+button[type="submit"]:hover,
+.btn-primary:hover,
+.primary-button:hover {
+  background: var(--primary-hover) !important;
+}
+
+
+/* =========================================================
+   SECONDARY BUTTON
+   ========================================================= */
+
+.btn-secondary,
+.secondary-button {
+  background: #202936 !important;
+
+  color: #d7dee8 !important;
+
+  border-color: var(--border) !important;
+}
+
+.btn-secondary:hover,
+.secondary-button:hover {
+  background: #283341 !important;
+}
+
+
+/* =========================================================
+   DANGER BUTTON
+   ========================================================= */
+
+.btn-danger,
+.danger-button {
+  background: transparent !important;
+
+  color: #f87171 !important;
+
+  border-color: #7f2930 !important;
+}
+
+.btn-danger:hover,
+.danger-button:hover {
+  background: var(--danger-soft) !important;
+
+  color: #fca5a5 !important;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status-success,
+.status-resolved,
+.badge-success {
+  color: #4ade80 !important;
+  background: var(--success-soft) !important;
+  border: 1px solid #1d5935;
+}
+
+.status-warning,
+.status-open,
+.badge-warning {
+  color: #fbbf24 !important;
+  background: var(--warning-soft) !important;
+  border: 1px solid #6b470e;
+}
+
+.status-danger,
+.status-urgent,
+.badge-danger {
+  color: #f87171 !important;
+  background: var(--danger-soft) !important;
+  border: 1px solid #70282f;
+}
+
+
+/* =========================================================
+   DASHBOARD / STAT VALUES
+   ========================================================= */
+
+.stat-card h3,
+.stat-card h4,
+.stat-card .value {
+  color: var(--heading) !important;
+}
+
+.stat-card p,
+.stat-card .description,
+.stat-card .label {
+  color: var(--text-muted) !important;
+}
+
+
+/* =========================================================
+   LOGIN PAGE
+   ========================================================= */
+
+.login-page,
+.login-container {
+  min-height: 100vh;
+
+  background: var(--bg) !important;
+
+  color: var(--text) !important;
+}
+
+.login-card {
+  background: var(--surface) !important;
+
+  border: 1px solid var(--border) !important;
+
+  border-radius: 8px;
+
+  box-shadow: none !important;
+}
+
+.login-card h1,
+.login-card h2 {
+  color: var(--heading) !important;
+}
+
+.login-card p {
+  color: var(--text-muted) !important;
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  color: var(--text) !important;
+}
+
+th {
+  color: var(--text-light) !important;
+
+  background: #151b23 !important;
+
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  color: var(--text) !important;
+
+  border-bottom: 1px solid var(--border);
+}
+
+tr:hover td {
+  background: #1d2530 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .navbar-container {
+    padding: 12px 18px;
+  }
+
+  .navbar-links {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: flex;
+  }
+
+  .mobile-menu {
+    position: absolute;
+
+    top: calc(100% + 1px);
+
+    left: 0;
+    right: 0;
+
+    padding: 10px 18px 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    background: #151b23 !important;
+
+    border-bottom: 1px solid var(--border);
+
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  }
+
+  .mobile-nav-link {
+    color: #9aa6b5 !important;
+
+    text-decoration: none;
+
+    padding: 12px 14px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mobile-nav-link:hover {
+    color: #f1f5f9 !important;
+    background: #202936 !important;
+  }
+
+  .mobile-nav-link.active {
+    color: #ffffff !important;
+    background: var(--primary) !important;
   }
 }
-p {
-  margin: 0;
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+  .navbar-container {
+    padding: 11px 14px;
+  }
+
+  .navbar-brand {
+    font-size: 17px;
+  }
+
+  .brand-icon {
+    width: 28px;
+    height: 28px;
+  }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+
+/* =========================================================
+   RESPONSIVE TYPOGRAPHY
+   ========================================================= */
+
+@media (max-width: 1024px) {
+
+  h1 {
+    font-size: 36px;
+  }
+
+  h2 {
+    font-size: 26px;
+  }
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@media (max-width: 640px) {
+
+  :root {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 32px;
+    letter-spacing: -0.5px;
+  }
+
+  h2 {
+    font-size: 23px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
 }

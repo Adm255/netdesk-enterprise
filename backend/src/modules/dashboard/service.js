@@ -6,8 +6,8 @@ const {
 
 const getDashboardStatistics = async () => {
   const [
-    tickets,
-    users,
+    ticketStatistics,
+    userStatistics,
     technicianWorkload
   ] = await Promise.all([
     getTicketStatistics(),
@@ -16,8 +16,8 @@ const getDashboardStatistics = async () => {
   ]);
 
   return {
-    tickets,
-    users,
+    tickets: ticketStatistics,
+    users: userStatistics,
     technicianWorkload
   };
 };

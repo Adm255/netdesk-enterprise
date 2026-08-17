@@ -6,8 +6,13 @@ const {
   findUserByEmail,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
 } = require("./repository");
+
+const {
+  createUserSchema,
+  updateUserSchema,
+} = require("../../validators/userValidator");
 
 const getAllUsers = async () => {
   return await findAllUsers();
@@ -24,23 +29,31 @@ const getUserById = async (id) => {
 };
 
 const createNewUser = async (userData) => {
-  const existingUser = await findUserByEmail(userData.email);
+  // Validate user data before saving
+  const validatedData = createUserSchema.parse(userData);
+
+  const existingUser = await findUserByEmail(
+    validatedData.email
+  );
 
   if (existingUser) {
     throw new Error("Email already exists.");
   }
 
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
+  const hashedPassword = await bcrypt.hash(
+    validatedData.password,
+    10
+  );
 
   const user = await createUser({
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
+    firstName: validatedData.firstName,
+    lastName: validatedData.lastName,
+    email: validatedData.email,
     password: hashedPassword,
-    phone: userData.phone || null,
-    status: userData.status ?? true,
-    roleId: Number(userData.roleId),
-    departmentId: Number(userData.departmentId)
+    phone: validatedData.phone || null,
+    status: validatedData.status ?? true,
+    roleId: Number(validatedData.roleId),
+    departmentId: Number(validatedData.departmentId),
   });
 
   return user;
@@ -53,8 +66,16 @@ const updateExistingUser = async (id, userData) => {
     throw new Error("User not found.");
   }
 
-  if (userData.email && userData.email !== existingUser.email) {
-    const emailOwner = await findUserByEmail(userData.email);
+  // Validate update data before saving
+  const validatedData = updateUserSchema.parse(userData);
+
+  if (
+    validatedData.email &&
+    validatedData.email !== existingUser.email
+  ) {
+    const emailOwner = await findUserByEmail(
+      validatedData.email
+    );
 
     if (emailOwner) {
       throw new Error("Email already exists.");
@@ -63,36 +84,41 @@ const updateExistingUser = async (id, userData) => {
 
   const updateData = {};
 
-  if (userData.firstName !== undefined) {
-    updateData.firstName = userData.firstName;
+  if (validatedData.firstName !== undefined) {
+    updateData.firstName = validatedData.firstName;
   }
 
-  if (userData.lastName !== undefined) {
-    updateData.lastName = userData.lastName;
+  if (validatedData.lastName !== undefined) {
+    updateData.lastName = validatedData.lastName;
   }
 
-  if (userData.email !== undefined) {
-    updateData.email = userData.email;
+  if (validatedData.email !== undefined) {
+    updateData.email = validatedData.email;
   }
 
-  if (userData.phone !== undefined) {
-    updateData.phone = userData.phone;
+  if (validatedData.phone !== undefined) {
+    updateData.phone = validatedData.phone;
   }
 
-  if (userData.status !== undefined) {
-    updateData.status = userData.status;
+  if (validatedData.status !== undefined) {
+    updateData.status = validatedData.status;
   }
 
-  if (userData.roleId !== undefined) {
-    updateData.roleId = Number(userData.roleId);
+  if (validatedData.roleId !== undefined) {
+    updateData.roleId = Number(validatedData.roleId);
   }
 
-  if (userData.departmentId !== undefined) {
-    updateData.departmentId = Number(userData.departmentId);
+  if (validatedData.departmentId !== undefined) {
+    updateData.departmentId = Number(
+      validatedData.departmentId
+    );
   }
 
-  if (userData.password) {
-    updateData.password = await bcrypt.hash(userData.password, 10);
+  if (validatedData.password) {
+    updateData.password = await bcrypt.hash(
+      validatedData.password,
+      10
+    );
   }
 
   return await updateUser(id, updateData);
@@ -115,5 +141,5 @@ module.exports = {
   getUserById,
   createNewUser,
   updateExistingUser,
-  deleteExistingUser
+  deleteExistingUser,
 };

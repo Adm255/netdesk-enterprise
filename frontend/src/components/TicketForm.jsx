@@ -25,10 +25,7 @@ export default function TicketForm({
 
         setTechnicians(technicianUsers);
       } catch (error) {
-        console.error(
-          "Failed to load technicians:",
-          error
-        );
+        console.error("Failed to load technicians:", error);
       }
     };
 
@@ -37,23 +34,28 @@ export default function TicketForm({
 
   useEffect(() => {
     if (editingTicket) {
-      setTitle(editingTicket.title);
-      setDescription(editingTicket.description);
-      setPriority(editingTicket.priority);
-      setStatus(editingTicket.status);
+      setTitle(editingTicket.title || "");
+      setDescription(editingTicket.description || "");
+      setPriority(editingTicket.priority || "LOW");
+      setStatus(editingTicket.status || "OPEN");
+
       setAssignedToId(
         editingTicket.assignedToId
           ? String(editingTicket.assignedToId)
           : ""
       );
     } else {
-      setTitle("");
-      setDescription("");
-      setPriority("LOW");
-      setStatus("OPEN");
-      setAssignedToId("");
+      resetForm();
     }
   }, [editingTicket]);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setPriority("LOW");
+    setStatus("OPEN");
+    setAssignedToId("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,131 +71,362 @@ export default function TicketForm({
     });
 
     if (!editingTicket) {
-      setTitle("");
-      setDescription("");
-      setPriority("LOW");
-      setStatus("OPEN");
-      setAssignedToId("");
+      resetForm();
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ marginBottom: "30px" }}
-    >
-      <h2>
-        {editingTicket
-          ? "Edit Ticket"
-          : "Create Ticket"}
-      </h2>
-
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) =>
-            setTitle(e.target.value)
-          }
-          required
-          style={{
-            width: "300px",
-            padding: "10px",
-          }}
-        />
-      </div>
-
-      <div style={{ marginBottom: "10px" }}>
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) =>
-            setDescription(e.target.value)
-          }
-          rows={4}
-          required
-          style={{
-            width: "300px",
-            padding: "10px",
-          }}
-        />
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <select
-          value={priority}
-          onChange={(e) =>
-            setPriority(e.target.value)
-          }
-          style={{ padding: "10px" }}
-        >
-          <option value="LOW">LOW</option>
-          <option value="MEDIUM">MEDIUM</option>
-          <option value="HIGH">HIGH</option>
-          <option value="URGENT">URGENT</option>
-        </select>
-      </div>
-
-      {editingTicket && (
-        <div style={{ marginBottom: "15px" }}>
-          <select
-            value={status}
-            onChange={(e) =>
-              setStatus(e.target.value)
-            }
-            style={{ padding: "10px" }}
-          >
-            <option value="OPEN">OPEN</option>
-            <option value="IN_PROGRESS">
-              IN PROGRESS
-            </option>
-            <option value="RESOLVED">
-              RESOLVED
-            </option>
-            <option value="CLOSED">CLOSED</option>
-          </select>
+    <section style={styles.wrapper}>
+      {/* HEADER */}
+      <div style={styles.header}>
+        <div style={styles.iconBox}>
+          <span style={styles.icon}>T</span>
         </div>
-      )}
 
-      <div style={{ marginBottom: "15px" }}>
-        <select
-          value={assignedToId}
-          onChange={(e) =>
-            setAssignedToId(e.target.value)
-          }
-          style={{ padding: "10px" }}
-        >
-          <option value="">Unassigned</option>
+        <div>
+          <p style={styles.eyebrow}>
+            {editingTicket
+              ? "TICKET MANAGEMENT"
+              : "SUPPORT REQUEST"}
+          </p>
 
-          {technicians.map((technician) => (
-            <option
-              key={technician.id}
-              value={technician.id}
-            >
-              {technician.firstName}{" "}
-              {technician.lastName}
-            </option>
-          ))}
-        </select>
+          <h2 style={styles.title}>
+            {editingTicket
+              ? "Edit Ticket"
+              : "Create New Ticket"}
+          </h2>
+
+          <p style={styles.subtitle}>
+            {editingTicket
+              ? "Update the ticket details, priority, status and assignment."
+              : "Create a support request and assign it to a technician."}
+          </p>
+        </div>
       </div>
 
-      <button type="submit">
-        {editingTicket
-          ? "Update Ticket"
-          : "Create Ticket"}
-      </button>
+      {/* FORM */}
+      <form onSubmit={handleSubmit} autoComplete="off">
+        {/* TITLE */}
+        <div style={styles.field}>
+          <label style={styles.label}>Ticket Title</label>
 
-      {editingTicket && (
-        <button
-          type="button"
-          onClick={onCancelEdit}
-          style={{ marginLeft: "10px" }}
-        >
-          Cancel
-        </button>
-      )}
-    </form>
+          <input
+            type="text"
+            name="ticket-title"
+            autoComplete="off"
+            placeholder="e.g. Office Wi-Fi connection issue"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            style={styles.input}
+          />
+        </div>
+
+        {/* DESCRIPTION */}
+        <div style={styles.field}>
+          <label style={styles.label}>Description</label>
+
+          <textarea
+            name="ticket-description"
+            autoComplete="off"
+            placeholder="Describe the issue in detail..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={6}
+            required
+            style={styles.textarea}
+          />
+        </div>
+
+        {/* PRIORITY + TECHNICIAN */}
+        <div style={styles.grid}>
+          <div style={styles.field}>
+            <label style={styles.label}>Priority</label>
+
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              style={styles.select}
+            >
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
+            </select>
+          </div>
+
+          <div style={styles.field}>
+            <label style={styles.label}>
+              Assign Technician
+            </label>
+
+            <select
+              value={assignedToId}
+              onChange={(e) =>
+                setAssignedToId(e.target.value)
+              }
+              style={styles.select}
+            >
+              <option value="">Unassigned</option>
+
+              {technicians.map((technician) => (
+                <option
+                  key={technician.id}
+                  value={technician.id}
+                >
+                  {technician.firstName}{" "}
+                  {technician.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* STATUS */}
+        {editingTicket && (
+          <div style={styles.field}>
+            <label style={styles.label}>Ticket Status</label>
+
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              style={styles.select}
+            >
+              <option value="OPEN">Open</option>
+              <option value="IN_PROGRESS">
+                In Progress
+              </option>
+              <option value="RESOLVED">
+                Resolved
+              </option>
+              <option value="CLOSED">Closed</option>
+            </select>
+          </div>
+        )}
+
+        {/* ACTIONS */}
+        <div style={styles.actions}>
+          <button
+            type="submit"
+            style={styles.primaryButton}
+          >
+            {editingTicket
+              ? "Update Ticket"
+              : "Create Ticket"}
+          </button>
+
+          {editingTicket && (
+            <button
+              type="button"
+              onClick={onCancelEdit}
+              style={styles.secondaryButton}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
+    </section>
   );
 }
 
+const styles = {
+  wrapper: {
+    width: "100%",
+    maxWidth: "920px",
+    margin: "0 auto 48px",
+    padding: "38px",
+    boxSizing: "border-box",
+
+    border: "1px solid #243653",
+    borderRadius: "20px",
+
+    background:
+      "linear-gradient(145deg, #111b2d 0%, #0f1726 100%)",
+
+    boxShadow:
+      "0 20px 50px rgba(0, 0, 0, 0.25)",
+  },
+
+  /* HEADER */
+  header: {
+    display: "flex",
+    alignItems: "center",
+    gap: "18px",
+    marginBottom: "36px",
+  },
+
+  iconBox: {
+    width: "54px",
+    height: "54px",
+    flexShrink: 0,
+
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    borderRadius: "14px",
+
+    background:
+      "linear-gradient(135deg, #2563eb, #3b82f6)",
+
+    boxShadow:
+      "0 8px 24px rgba(37, 99, 235, 0.25)",
+  },
+
+  icon: {
+    color: "#ffffff",
+    fontSize: "22px",
+    fontWeight: "800",
+  },
+
+  eyebrow: {
+    margin: "0 0 7px",
+    color: "#60a5fa",
+    fontSize: "11px",
+    fontWeight: "800",
+    letterSpacing: "2px",
+  },
+
+  title: {
+    margin: "0",
+    color: "#f8fafc",
+    fontSize: "30px",
+    fontWeight: "800",
+    letterSpacing: "-0.6px",
+  },
+
+  subtitle: {
+    margin: "8px 0 0",
+    color: "#8295b2",
+    fontSize: "14px",
+    lineHeight: "1.6",
+  },
+
+  /* FIELDS */
+  field: {
+    marginBottom: "24px",
+  },
+
+  label: {
+    display: "block",
+    marginBottom: "9px",
+
+    color: "#b9c7dc",
+    fontSize: "13px",
+    fontWeight: "700",
+  },
+
+  input: {
+    width: "100%",
+    height: "50px",
+    boxSizing: "border-box",
+
+    padding: "0 15px",
+
+    border: "1px solid #2a3a54",
+    borderRadius: "11px",
+
+    background: "#0d1623",
+    color: "#f8fafc",
+
+    fontSize: "14px",
+    outline: "none",
+  },
+
+  textarea: {
+    width: "100%",
+    boxSizing: "border-box",
+
+    padding: "14px 15px",
+
+    border: "1px solid #2a3a54",
+    borderRadius: "11px",
+
+    background: "#0d1623",
+    color: "#f8fafc",
+
+    fontSize: "14px",
+    lineHeight: "1.6",
+
+    resize: "vertical",
+    outline: "none",
+    fontFamily: "inherit",
+  },
+
+  select: {
+    width: "100%",
+    height: "50px",
+    boxSizing: "border-box",
+
+    padding: "0 15px",
+
+    border: "1px solid #2a3a54",
+    borderRadius: "11px",
+
+    background: "#0d1623",
+    color: "#f8fafc",
+
+    fontSize: "14px",
+    cursor: "pointer",
+    outline: "none",
+  },
+
+  /* TWO COLUMNS */
+  grid: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(2, minmax(0, 1fr))",
+    gap: "20px",
+  },
+
+  /* ACTIONS */
+  actions: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+
+    marginTop: "8px",
+    paddingTop: "8px",
+  },
+
+  primaryButton: {
+    minWidth: "150px",
+    height: "46px",
+
+    padding: "0 22px",
+
+    border: "none",
+    borderRadius: "10px",
+
+    background:
+      "linear-gradient(135deg, #2563eb, #3b82f6)",
+
+    color: "#ffffff",
+
+    fontSize: "14px",
+    fontWeight: "700",
+
+    cursor: "pointer",
+
+    boxShadow:
+      "0 8px 22px rgba(37, 99, 235, 0.25)",
+  },
+
+  secondaryButton: {
+    height: "46px",
+
+    padding: "0 22px",
+
+    border: "1px solid #34445d",
+    borderRadius: "10px",
+
+    background: "#172235",
+    color: "#cbd5e1",
+
+    fontSize: "14px",
+    fontWeight: "600",
+
+    cursor: "pointer",
+  },
+};
