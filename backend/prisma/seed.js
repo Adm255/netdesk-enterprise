@@ -45,8 +45,13 @@ async function main() {
     where: {
       email: "admin@netdesk.com"
     },
-    update: {},
-    create: {
+    update: {
+  password: adminPassword,
+  status: true,
+  roleId: 1,
+  departmentId: 1
+},
+create: {
       firstName: "NetDesk",
       lastName: "Administrator",
       email: "admin@netdesk.com",
