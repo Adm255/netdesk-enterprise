@@ -6,15 +6,28 @@ const ticketInclude = {
       id: true,
       firstName: true,
       lastName: true,
-      email: true
+      email: true,
+      department: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     }
   },
+
   assignedTo: {
     select: {
       id: true,
       firstName: true,
       lastName: true,
-      email: true
+      email: true,
+      department: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     }
   }
 };

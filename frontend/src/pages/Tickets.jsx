@@ -686,45 +686,63 @@ export default function Tickets() {
                     {ticket.description}
                   </p>
 
-                  {/* Metadata */}
+                <div style={styles.ticketMeta}>
 
-                  <div style={styles.ticketMeta}>
+  <div style={styles.metaItem}>
+    <span style={styles.metaLabel}>
+      Reported By
+    </span>
 
-                    <div style={styles.metaItem}>
-                      <span style={styles.metaLabel}>
-                        Assigned To
-                      </span>
+    <span style={styles.metaValue}>
+      {ticket.createdBy
+        ? `${ticket.createdBy.firstName} ${ticket.createdBy.lastName}`
+        : "Unknown"}
+    </span>
+  </div>
 
-                      <span style={styles.metaValue}>
-                        {ticket.assignedTo
-                          ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}`
-                          : "Unassigned"}
-                      </span>
-                    </div>
+  <div style={styles.metaItem}>
+    <span style={styles.metaLabel}>
+      Department
+    </span>
 
-                    <div style={styles.metaItem}>
-                      <span style={styles.metaLabel}>
-                        Priority
-                      </span>
+    <span style={styles.metaValue}>
+      {ticket.createdBy?.department?.name || "Unknown"}
+    </span>
+  </div>
 
-                      <span style={styles.metaValue}>
-                        {ticket.priority}
-                      </span>
-                    </div>
+  <div style={styles.metaItem}>
+    <span style={styles.metaLabel}>
+      Assigned To
+    </span>
 
-                    <div style={styles.metaItem}>
-                      <span style={styles.metaLabel}>
-                        Status
-                      </span>
+    <span style={styles.metaValue}>
+      {ticket.assignedTo
+        ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}`
+        : "Unassigned"}
+    </span>
+  </div>
 
-                      <span style={styles.metaValue}>
-                        {formatStatus(
-                          ticket.status
-                        )}
-                      </span>
-                    </div>
+  <div style={styles.metaItem}>
+    <span style={styles.metaLabel}>
+      Priority
+    </span>
 
-                  </div>
+    <span style={styles.metaValue}>
+      {ticket.priority}
+    </span>
+  </div>
+
+  <div style={styles.metaItem}>
+    <span style={styles.metaLabel}>
+      Status
+    </span>
+
+    <span style={styles.metaValue}>
+      {formatStatus(ticket.status)}
+    </span>
+  </div>
+
+</div>
 
                   {/* Actions */}
 
