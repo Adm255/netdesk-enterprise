@@ -26,20 +26,24 @@ const VALID_PRIORITIES = [
 ];
 
 const createNewTicket = async (ticketData, userId) => {
+  // Use custom reporterId/createdById if provided, otherwise default to logged-in userId
+  const effectiveCreatedById =
+    ticketData.reporterId || ticketData.createdById || userId;
+
   const validatedData = createTicketSchema.parse({
     ...ticketData,
-    createdById: Number(userId),
+    createdById: Number(effectiveCreatedById),
     status: "OPEN",
   });
 
+  // Note: department is intentionally omitted because department lives on the User model in Prisma
   const ticket = await createTicket({
     title: validatedData.title,
     description: validatedData.description,
     priority: validatedData.priority,
     status: "OPEN",
     createdById: validatedData.createdById,
-    assignedToId:
-      validatedData.assignedToId ?? null,
+    assignedToId: validatedData.assignedToId ?? null,
   });
 
   return ticket;
