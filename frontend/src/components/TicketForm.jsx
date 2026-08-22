@@ -11,25 +11,30 @@ export default function TicketForm({
   const [priority, setPriority] = useState("LOW");
   const [status, setStatus] = useState("OPEN");
   const [assignedToId, setAssignedToId] = useState("");
+  const [reporterId, setReporterId] = useState("");
+  const [department, setDepartment] = useState("");
 
   const [technicians, setTechnicians] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const loadTechnicians = async () => {
+    const loadUserData = async () => {
       try {
         const data = await getUsers();
+        const userList = data.users || [];
+        setUsers(userList);
 
-        const technicianUsers = data.users.filter(
+        const technicianUsers = userList.filter(
           (user) => user.roleId === 3
         );
 
         setTechnicians(technicianUsers);
       } catch (error) {
-        console.error("Failed to load technicians:", error);
+        console.error("Failed to load users:", error);
       }
     };
 
-    loadTechnicians();
+    loadUserData();
   }, []);
 
   useEffect(() => {
@@ -44,6 +49,22 @@ export default function TicketForm({
           ? String(editingTicket.assignedToId)
           : ""
       );
+
+      const currentReporter =
+        editingTicket.createdBy?.id ||
+        editingTicket.reporterId ||
+        editingTicket.reporter?.id;
+      setReporterId(currentReporter ? String(currentReporter) : "");
+
+      const currentDepartment =
+        editingTicket.department?.name ||
+        editingTicket.department ||
+        editingTicket.createdBy?.department?.name ||
+        editingTicket.createdBy?.department ||
+        "";
+      setDepartment(
+        typeof currentDepartment === "string" ? currentDepartment : ""
+      );
     } else {
       resetForm();
     }
@@ -55,6 +76,8 @@ export default function TicketForm({
     setPriority("LOW");
     setStatus("OPEN");
     setAssignedToId("");
+    setReporterId("");
+    setDepartment("");
   };
 
   const handleSubmit = async (e) => {
@@ -65,9 +88,10 @@ export default function TicketForm({
       description,
       priority,
       status,
-      assignedToId: assignedToId
-        ? Number(assignedToId)
-        : null,
+      assignedToId: assignedToId ? Number(assignedToId) : null,
+      reporterId: reporterId ? Number(reporterId) : null,
+      createdBy: reporterId ? Number(reporterId) : null,
+      department: department || undefined,
     });
 
     if (!editingTicket) {
@@ -136,6 +160,41 @@ export default function TicketForm({
             required
             style={styles.textarea}
           />
+        </div>
+
+        {/* REPORTED BY + DEPARTMENT */}
+        <div style={{ ...styles.grid, marginBottom: "24px" }}>
+          <div style={styles.field}>
+            <label style={styles.label}>Reported By</label>
+
+            <select
+              value={reporterId}
+              onChange={(e) => setReporterId(e.target.value)}
+              style={styles.select}
+            >
+              <option value="">Current Authenticated User</option>
+
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div style={styles.field}>
+            <label style={styles.label}>Department</label>
+
+            <input
+              type="text"
+              name="ticket-department"
+              autoComplete="off"
+              placeholder="e.g. Information Technology"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              style={styles.input}
+            />
+          </div>
         </div>
 
         {/* PRIORITY + TECHNICIAN */}
