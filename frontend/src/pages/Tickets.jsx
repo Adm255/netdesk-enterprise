@@ -15,7 +15,6 @@ import TicketForm from "../components/TicketForm";
 export default function Tickets() {
   const [tickets, setTickets] = useState([]);
   const [editingTicket, setEditingTicket] = useState(null);
-
   const [technicians, setTechnicians] = useState([]);
 
   const [search, setSearch] = useState("");
@@ -33,20 +32,20 @@ export default function Tickets() {
   });
 
   const [loading, setLoading] = useState(false);
-
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Convert backend/Zod validation errors into a clean message for users.
+  // --------------------------------------------------
+  // ERROR MESSAGE
+  // --------------------------------------------------
+
   const getErrorMessage = (error, fallback) => {
     const rawMessage = error?.response?.data?.message;
 
     if (Array.isArray(rawMessage)) {
       const messages = rawMessage
         .map((item) =>
-          typeof item === "string"
-            ? item
-            : item?.message
+          typeof item === "string" ? item : item?.message
         )
         .filter(Boolean);
 
@@ -62,9 +61,7 @@ export default function Tickets() {
         if (Array.isArray(parsed)) {
           const messages = parsed
             .map((item) =>
-              typeof item === "string"
-                ? item
-                : item?.message
+              typeof item === "string" ? item : item?.message
             )
             .filter(Boolean);
 
@@ -73,13 +70,70 @@ export default function Tickets() {
           }
         }
       } catch {
-        // The backend returned a normal text message.
+        // Normal text response.
       }
 
       return rawMessage;
     }
 
     return fallback;
+  };
+
+  // --------------------------------------------------
+  // DISPLAY HELPERS
+  // --------------------------------------------------
+  // Reporter + department are resolved defensively so the UI
+  // continues to display them even if the API response uses
+  // slightly different nested shapes.
+
+  const getReporterName = (ticket) => {
+    const reporter =
+      ticket?.createdBy ||
+      ticket?.reporter ||
+      ticket?.created_by;
+
+    if (!reporter) {
+      return "Unknown";
+    }
+
+    if (typeof reporter === "string") {
+      return reporter;
+    }
+
+    const name = [reporter.firstName, reporter.lastName]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      name ||
+      reporter.name ||
+      reporter.fullName ||
+      reporter.email ||
+      "Unknown"
+    );
+  };
+
+  const getDepartmentName = (ticket) => {
+    const department =
+      ticket?.createdBy?.department ||
+      ticket?.reporter?.department ||
+      ticket?.created_by?.department ||
+      ticket?.department;
+
+    if (!department) {
+      return "Unknown";
+    }
+
+    if (typeof department === "string") {
+      return department;
+    }
+
+    return (
+      department.name ||
+      department.departmentName ||
+      department.title ||
+      "Unknown"
+    );
   };
 
   // --------------------------------------------------
@@ -90,7 +144,7 @@ export default function Tickets() {
     try {
       const data = await getUsers();
 
-      const technicianUsers = data.users.filter(
+      const technicianUsers = (data.users || []).filter(
         (user) => user.roleId === 3
       );
 
@@ -127,13 +181,13 @@ export default function Tickets() {
         limit: 10,
       });
 
-      setTickets(data.tickets);
+      setTickets(data.tickets || []);
 
       setPagination(
         data.pagination || {
           page: 1,
           limit: 10,
-          total: data.tickets.length,
+          total: data.tickets?.length || 0,
           totalPages: 1,
         }
       );
@@ -158,13 +212,7 @@ export default function Tickets() {
 
   useEffect(() => {
     loadTickets();
-  }, [
-    search,
-    status,
-    priority,
-    assignedToId,
-    page,
-  ]);
+  }, [search, status, priority, assignedToId, page]);
 
   // --------------------------------------------------
   // CREATE / UPDATE
@@ -184,15 +232,13 @@ export default function Tickets() {
         setEditingTicket(null);
 
         setMessage(
-          response?.message ||
-            "Ticket updated successfully."
+          response?.message || "Ticket updated successfully."
         );
       } else {
         const response = await createTicket(ticketData);
 
         setMessage(
-          response?.message ||
-            "Ticket created successfully."
+          response?.message || "Ticket created successfully."
         );
       }
 
@@ -226,8 +272,7 @@ export default function Tickets() {
       const response = await deleteTicket(id);
 
       setMessage(
-        response?.message ||
-          "Ticket deleted successfully."
+        response?.message || "Ticket deleted successfully."
       );
 
       await loadTickets();
@@ -276,9 +321,7 @@ export default function Tickets() {
     return ticketStatus
       .replace("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, (letter) =>
-        letter.toUpperCase()
-      );
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   };
 
   const getStatusStyle = (ticketStatus) => {
@@ -288,19 +331,16 @@ export default function Tickets() {
         color: "#f59e0b",
         border: "1px solid rgba(245,158,11,0.25)",
       },
-
       IN_PROGRESS: {
         background: "rgba(139,92,246,0.12)",
         color: "#a78bfa",
         border: "1px solid rgba(139,92,246,0.25)",
       },
-
       RESOLVED: {
         background: "rgba(34,197,94,0.12)",
         color: "#4ade80",
         border: "1px solid rgba(34,197,94,0.25)",
       },
-
       CLOSED: {
         background: "rgba(100,116,139,0.15)",
         color: "#94a3b8",
@@ -321,19 +361,16 @@ export default function Tickets() {
         color: "#60a5fa",
         border: "1px solid rgba(59,130,246,0.25)",
       },
-
       MEDIUM: {
         background: "rgba(245,158,11,0.12)",
         color: "#fbbf24",
         border: "1px solid rgba(245,158,11,0.25)",
       },
-
       HIGH: {
         background: "rgba(249,115,22,0.12)",
         color: "#fb923c",
         border: "1px solid rgba(249,115,22,0.25)",
       },
-
       URGENT: {
         background: "rgba(239,68,68,0.12)",
         color: "#f87171",
@@ -352,24 +389,14 @@ export default function Tickets() {
       <Navbar />
 
       <main style={styles.page}>
-
-        {/* ==================================================
-            PAGE HEADER
-        ================================================== */}
-
         <header style={styles.pageHeader}>
           <div>
-            <p style={styles.eyebrow}>
-              IT SERVICE MANAGEMENT
-            </p>
+            <p style={styles.eyebrow}>IT SERVICE MANAGEMENT</p>
 
-            <h1 style={styles.pageTitle}>
-              Support Tickets
-            </h1>
+            <h1 style={styles.pageTitle}>Support Tickets</h1>
 
             <p style={styles.pageSubtitle}>
-              Create, assign, track and manage support
-              requests.
+              Create, assign, track and manage support requests.
             </p>
           </div>
 
@@ -384,10 +411,6 @@ export default function Tickets() {
           </div>
         </header>
 
-        {/* ==================================================
-            SUCCESS MESSAGE
-        ================================================== */}
-
         {message && (
           <div style={styles.successMessage}>
             <span style={styles.messageIcon}>✓</span>
@@ -395,20 +418,12 @@ export default function Tickets() {
           </div>
         )}
 
-        {/* ==================================================
-            ERROR MESSAGE
-        ================================================== */}
-
         {errorMessage && (
           <div style={styles.errorMessage}>
             <span style={styles.messageIcon}>✕</span>
             <span>{errorMessage}</span>
           </div>
         )}
-
-        {/* ==================================================
-            CREATE / EDIT FORM
-        ================================================== */}
 
         <TicketForm
           onCreate={handleCreateTicket}
@@ -420,21 +435,12 @@ export default function Tickets() {
           }}
         />
 
-        {/* ==================================================
-            TICKET LIST
-        ================================================== */}
-
         <section style={styles.listSection}>
-
           <div style={styles.sectionHeader}>
             <div>
-              <p style={styles.eyebrow}>
-                TICKET MANAGEMENT
-              </p>
+              <p style={styles.eyebrow}>TICKET MANAGEMENT</p>
 
-              <h2 style={styles.sectionTitle}>
-                All Tickets
-              </h2>
+              <h2 style={styles.sectionTitle}>All Tickets</h2>
             </div>
 
             {pagination.total > 0 && (
@@ -445,29 +451,17 @@ export default function Tickets() {
             )}
           </div>
 
-          {/* ==================================================
-              FILTER CARD
-          ================================================== */}
-
           <div style={styles.filterCard}>
-
             <div style={styles.filterHeader}>
-
               <div>
-                <h3 style={styles.filterTitle}>
-                  Filter Tickets
-                </h3>
+                <h3 style={styles.filterTitle}>Filter Tickets</h3>
 
                 <p style={styles.filterSubtitle}>
-                  Find tickets by title, status,
-                  priority or technician.
+                  Find tickets by title, status, priority or technician.
                 </p>
               </div>
 
-              {(search ||
-                status ||
-                priority ||
-                assignedToId) && (
+              {(search || status || priority || assignedToId) && (
                 <button
                   type="button"
                   onClick={clearFilters}
@@ -478,18 +472,9 @@ export default function Tickets() {
               )}
             </div>
 
-            {/* IMPORTANT:
-                Responsive grid.
-                Desktop = 4 columns.
-                Smaller screens = fewer columns.
-            */}
-
             <div style={styles.filterGrid}>
-
               <div style={styles.searchWrapper}>
-                <span style={styles.searchIcon}>
-                  Search
-                </span>
+                <span style={styles.searchIcon}>Search</span>
 
                 <input
                   type="text"
@@ -511,25 +496,11 @@ export default function Tickets() {
                 }}
                 style={styles.filterSelect}
               >
-                <option value="">
-                  All Statuses
-                </option>
-
-                <option value="OPEN">
-                  Open
-                </option>
-
-                <option value="IN_PROGRESS">
-                  In Progress
-                </option>
-
-                <option value="RESOLVED">
-                  Resolved
-                </option>
-
-                <option value="CLOSED">
-                  Closed
-                </option>
+                <option value="">All Statuses</option>
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="CLOSED">Closed</option>
               </select>
 
               <select
@@ -540,25 +511,11 @@ export default function Tickets() {
                 }}
                 style={styles.filterSelect}
               >
-                <option value="">
-                  All Priorities
-                </option>
-
-                <option value="LOW">
-                  Low
-                </option>
-
-                <option value="MEDIUM">
-                  Medium
-                </option>
-
-                <option value="HIGH">
-                  High
-                </option>
-
-                <option value="URGENT">
-                  Urgent
-                </option>
+                <option value="">All Priorities</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="URGENT">Urgent</option>
               </select>
 
               <select
@@ -569,83 +526,44 @@ export default function Tickets() {
                 }}
                 style={styles.filterSelect}
               >
-                <option value="">
-                  All Technicians
-                </option>
-
-                <option value="unassigned">
-                  Unassigned
-                </option>
+                <option value="">All Technicians</option>
+                <option value="unassigned">Unassigned</option>
 
                 {technicians.map((technician) => (
-                  <option
-                    key={technician.id}
-                    value={technician.id}
-                  >
-                    {technician.firstName}{" "}
-                    {technician.lastName}
+                  <option key={technician.id} value={technician.id}>
+                    {technician.firstName} {technician.lastName}
                   </option>
                 ))}
               </select>
-
             </div>
           </div>
 
-          {/* ==================================================
-              TICKET RESULTS
-          ================================================== */}
-
           <div style={styles.resultsArea}>
-
             {loading ? (
               <div style={styles.stateCard}>
-
                 <div style={styles.loadingDot} />
 
-                <h3 style={styles.stateTitle}>
-                  Loading tickets
-                </h3>
+                <h3 style={styles.stateTitle}>Loading tickets</h3>
 
                 <p style={styles.stateText}>
-                  Retrieving the latest support
-                  requests...
+                  Retrieving the latest support requests...
                 </p>
-
               </div>
             ) : tickets.length === 0 ? (
-
               <div style={styles.stateCard}>
+                <div style={styles.emptyIcon}>—</div>
 
-                <div style={styles.emptyIcon}>
-                  —
-                </div>
-
-                <h3 style={styles.stateTitle}>
-                  No tickets found
-                </h3>
+                <h3 style={styles.stateTitle}>No tickets found</h3>
 
                 <p style={styles.stateText}>
-                  Try adjusting your filters or
-                  create a new support ticket.
+                  Try adjusting your filters or create a new support ticket.
                 </p>
-
               </div>
-
             ) : (
-
               tickets.map((ticket) => (
-
-                <article
-                  key={ticket.id}
-                  style={styles.ticketCard}
-                >
-
-                  {/* Ticket heading */}
-
+                <article key={ticket.id} style={styles.ticketCard}>
                   <div style={styles.ticketTop}>
-
                     <div style={styles.ticketMain}>
-
                       <div style={styles.ticketId}>
                         TICKET #{ticket.id}
                       </div>
@@ -653,106 +571,72 @@ export default function Tickets() {
                       <h3 style={styles.ticketTitle}>
                         {ticket.title}
                       </h3>
-
                     </div>
 
                     <div style={styles.ticketBadges}>
-
-                      <span
-                        style={getStatusStyle(
-                          ticket.status
-                        )}
-                      >
-                        {formatStatus(
-                          ticket.status
-                        )}
+                      <span style={getStatusStyle(ticket.status)}>
+                        {formatStatus(ticket.status)}
                       </span>
 
-                      <span
-                        style={getPriorityStyle(
-                          ticket.priority
-                        )}
-                      >
+                      <span style={getPriorityStyle(ticket.priority)}>
                         {ticket.priority}
                       </span>
-
                     </div>
-
                   </div>
-
-                  {/* Description */}
 
                   <p style={styles.ticketDescription}>
                     {ticket.description}
                   </p>
 
-                <div style={styles.ticketMeta}>
+                  {/* Reporter + Department */}
+                  <div style={styles.ticketMeta}>
+                    <div style={styles.metaItem}>
+                      <span style={styles.metaLabel}>Reported By</span>
 
-  <div style={styles.metaItem}>
-    <span style={styles.metaLabel}>
-      Reported By
-    </span>
+                      <span style={styles.metaValue}>
+                        {getReporterName(ticket)}
+                      </span>
+                    </div>
 
-    <span style={styles.metaValue}>
-      {ticket.createdBy
-        ? `${ticket.createdBy.firstName} ${ticket.createdBy.lastName}`
-        : "Unknown"}
-    </span>
-  </div>
+                    <div style={styles.metaItem}>
+                      <span style={styles.metaLabel}>Department</span>
 
-  <div style={styles.metaItem}>
-    <span style={styles.metaLabel}>
-      Department
-    </span>
+                      <span style={styles.metaValue}>
+                        {getDepartmentName(ticket)}
+                      </span>
+                    </div>
 
-    <span style={styles.metaValue}>
-      {ticket.createdBy?.department?.name || "Unknown"}
-    </span>
-  </div>
+                    <div style={styles.metaItem}>
+                      <span style={styles.metaLabel}>Assigned To</span>
 
-  <div style={styles.metaItem}>
-    <span style={styles.metaLabel}>
-      Assigned To
-    </span>
+                      <span style={styles.metaValue}>
+                        {ticket.assignedTo
+                          ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}`
+                          : "Unassigned"}
+                      </span>
+                    </div>
 
-    <span style={styles.metaValue}>
-      {ticket.assignedTo
-        ? `${ticket.assignedTo.firstName} ${ticket.assignedTo.lastName}`
-        : "Unassigned"}
-    </span>
-  </div>
+                    <div style={styles.metaItem}>
+                      <span style={styles.metaLabel}>Priority</span>
 
-  <div style={styles.metaItem}>
-    <span style={styles.metaLabel}>
-      Priority
-    </span>
+                      <span style={styles.metaValue}>
+                        {ticket.priority}
+                      </span>
+                    </div>
 
-    <span style={styles.metaValue}>
-      {ticket.priority}
-    </span>
-  </div>
+                    <div style={styles.metaItem}>
+                      <span style={styles.metaLabel}>Status</span>
 
-  <div style={styles.metaItem}>
-    <span style={styles.metaLabel}>
-      Status
-    </span>
-
-    <span style={styles.metaValue}>
-      {formatStatus(ticket.status)}
-    </span>
-  </div>
-
-</div>
-
-                  {/* Actions */}
+                      <span style={styles.metaValue}>
+                        {formatStatus(ticket.status)}
+                      </span>
+                    </div>
+                  </div>
 
                   <div style={styles.ticketActions}>
-
                     <button
                       type="button"
-                      onClick={() =>
-                        handleEditTicket(ticket)
-                      }
+                      onClick={() => handleEditTicket(ticket)}
                       style={styles.editButton}
                     >
                       Edit Ticket
@@ -760,84 +644,55 @@ export default function Tickets() {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        handleDeleteTicket(
-                          ticket.id
-                        )
-                      }
+                      onClick={() => handleDeleteTicket(ticket.id)}
                       style={styles.deleteButton}
                     >
                       Delete
                     </button>
-
                   </div>
-
                 </article>
-
               ))
-
             )}
-
           </div>
-
-          {/* ==================================================
-              PAGINATION
-          ================================================== */}
 
           {pagination.totalPages > 1 && (
             <div style={styles.pagination}>
-
               <button
                 type="button"
                 disabled={page === 1}
                 onClick={() =>
-                  setPage(
-                    (currentPage) =>
-                      currentPage - 1
-                  )
+                  setPage((currentPage) => currentPage - 1)
                 }
                 style={{
                   ...styles.paginationButton,
-                  ...(page === 1
-                    ? styles.disabledButton
-                    : {}),
+                  ...(page === 1 ? styles.disabledButton : {}),
                 }}
               >
                 Previous
               </button>
 
               <span style={styles.paginationText}>
-                Page {pagination.page} of{" "}
-                {pagination.totalPages}
+                Page {pagination.page} of {pagination.totalPages}
               </span>
 
               <button
                 type="button"
-                disabled={
-                  page === pagination.totalPages
-                }
+                disabled={page === pagination.totalPages}
                 onClick={() =>
-                  setPage(
-                    (currentPage) =>
-                      currentPage + 1
-                  )
+                  setPage((currentPage) => currentPage + 1)
                 }
                 style={{
                   ...styles.paginationButton,
-                  ...(page ===
-                  pagination.totalPages
+                  ...(page === pagination.totalPages
                     ? styles.disabledButton
                     : {}),
                 }}
               >
                 Next
               </button>
-
             </div>
           )}
-
         </section>
-
       </main>
     </>
   );
@@ -975,10 +830,6 @@ const styles = {
     color: "#8fa3bf",
   },
 
-  /* ----------------------------------------------------------
-     FILTER CARD
-  ---------------------------------------------------------- */
-
   filterCard: {
     width: "100%",
     padding: "24px",
@@ -1012,20 +863,6 @@ const styles = {
     color: "#70839f",
     lineHeight: "1.5",
   },
-
-  /*
-    FIXED FILTER GRID
-
-    The previous version used:
-
-    minmax(240px, 1.5fr)
-    repeat(3, minmax(150px, 1fr))
-
-    which could force the last select outside
-    the available width.
-
-    This version allows every column to shrink.
-  */
 
   filterGrid: {
     display: "grid",
@@ -1094,10 +931,6 @@ const styles = {
     fontWeight: "600",
     cursor: "pointer",
   },
-
-  /* ----------------------------------------------------------
-     RESULTS
-  ---------------------------------------------------------- */
 
   resultsArea: {
     display: "flex",
@@ -1234,10 +1067,6 @@ const styles = {
     cursor: "pointer",
   },
 
-  /* ----------------------------------------------------------
-     LOADING / EMPTY
-  ---------------------------------------------------------- */
-
   stateCard: {
     padding: "60px 25px",
     borderRadius: "16px",
@@ -1275,10 +1104,6 @@ const styles = {
     color: "#70839f",
     lineHeight: "1.5",
   },
-
-  /* ----------------------------------------------------------
-     PAGINATION
-  ---------------------------------------------------------- */
 
   pagination: {
     display: "flex",
