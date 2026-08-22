@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { getUsers } from "../api/users";
 
 const DEPARTMENTS = [
@@ -92,19 +93,29 @@ export default function TicketForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await onCreate({
-      title,
-      description,
-      priority,
-      status,
-      assignedToId: assignedToId ? Number(assignedToId) : null,
-      reporterId: reporterId ? Number(reporterId) : null,
-      createdBy: reporterId ? Number(reporterId) : null,
-      department: department || undefined,
-    });
+    try {
+      await onCreate({
+        title,
+        description,
+        priority,
+        status,
+        assignedToId: assignedToId ? Number(assignedToId) : null,
+        reporterId: reporterId ? Number(reporterId) : null,
+        createdBy: reporterId ? Number(reporterId) : null,
+        department: department || undefined,
+      });
 
-    if (!editingTicket) {
-      resetForm();
+      toast.success(
+        editingTicket
+          ? "Ticket updated successfully!"
+          : "Ticket created successfully!"
+      );
+
+      if (!editingTicket) {
+        resetForm();
+      }
+    } catch (error) {
+      toast.error(error?.message || "Failed to save ticket.");
     }
   };
 

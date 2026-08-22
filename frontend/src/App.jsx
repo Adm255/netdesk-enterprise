@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import {
   BrowserRouter,
   Navigate,
@@ -15,6 +16,17 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#0f172a",
+            color: "#f8fafc",
+            border: "1px solid #1e293b",
+          },
+        }}
+      />
       <Routes>
         <Route
           path="/"
