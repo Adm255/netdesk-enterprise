@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { getUsers } from "../api/users";
 
+const DEPARTMENTS = [
+  "Information Technology",
+  "Human Resources",
+  "Finance",
+  "Operations",
+  "Customer Support",
+  "Sales & Marketing",
+];
+
 export default function TicketForm({
   onCreate,
   editingTicket,
@@ -185,15 +194,18 @@ export default function TicketForm({
           <div style={styles.field}>
             <label style={styles.label}>Department</label>
 
-            <input
-              type="text"
-              name="ticket-department"
-              autoComplete="off"
-              placeholder="e.g. Information Technology"
+            <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              style={styles.input}
-            />
+              style={styles.select}
+            >
+              <option value="">Select Department</option>
+              {DEPARTMENTS.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
